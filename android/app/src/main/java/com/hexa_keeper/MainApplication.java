@@ -12,6 +12,7 @@ import com.facebook.soloader.SoLoader;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.hexa_keeper.KeepScreenAwakePackage;
 import com.hexa_keeper.WhirlpoolPackage;
+import com.hexa_keeper.NFCHostPackage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -31,6 +32,7 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
             packages.add(new WhirlpoolPackage());
             packages.add(new KeepScreenAwakePackage());
+            packages.add(new NFCHostPackage());
             return packages;
         }
 

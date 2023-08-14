@@ -12,7 +12,6 @@ import { Provider } from 'react-redux';
 import { sentryConfig } from 'src/core/services/sentry';
 import { withIAPContext, initConnection, endConnection } from 'react-native-iap';
 import { TorContextProvider } from 'src/store/contexts/TorContext';
-import { HCESessionProvider } from 'react-native-hce';
 import { customTheme } from './src/common/themes';
 import Navigator from './src/navigation/Navigator';
 import { LocalizationProvider } from './src/common/content/LocContext';
@@ -29,10 +28,6 @@ if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
-}
-
-function AndroidProvider({ children }: { children: ReactElement }) {
-  return Platform.OS === 'android' ? <HCESessionProvider>{children}</HCESessionProvider> : children;
 }
 
 function App() {
@@ -58,9 +53,7 @@ function App() {
         <LocalizationProvider>
           <AppContextProvider>
             <TorContextProvider>
-              <AndroidProvider>
-                <Navigator />
-              </AndroidProvider>
+              <Navigator />
             </TorContextProvider>
           </AppContextProvider>
         </LocalizationProvider>

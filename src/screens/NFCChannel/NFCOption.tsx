@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import OptionCTA from 'src/components/OptionCTA';
 import NFCIcon from 'src/assets/images/nfc.svg';
 import NfcPrompt from 'src/components/NfcPromptAndroid';
@@ -8,19 +8,18 @@ import nfcManager, { NfcTech } from 'react-native-nfc-manager';
 import ToastErrorIcon from 'src/assets/images/toast_error.svg';
 import NFC from 'src/core/services/nfc';
 import { SignerType } from 'src/core/wallets/enums';
-import { HCESession, HCESessionContext } from 'react-native-hce';
 import { Platform } from 'react-native';
-import idx from 'idx';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import AirDropIcon from 'src/assets/images/airdrop.svg';
+import NFCAndroid from 'src/nativemodules/NFCAndroid';
 
-function NFCOption({ nfcVisible, closeNfc, withNfcModal, setData, signerType }) {
+function NFCOption({ nfcVisible, closeNfc, withNfcModal, setData, signerType }: any) {
   const { showToast } = useToastMessage();
   const readFromNFC = async () => {
     try {
       await withNfcModal(async () => {
-        const records = await NFC.read([NfcTech.Ndef]);
+        const records = await NFC.read(NfcTech.Ndef);
         try {
           const cosigner = records[0].data;
           setData(cosigner);
@@ -61,16 +60,15 @@ function NFCOption({ nfcVisible, closeNfc, withNfcModal, setData, signerType }) 
     }
   };
 
-  const { session } = useContext(HCESessionContext);
   const isAndroid = Platform.OS === 'android';
   const isIos = Platform.OS === 'ios';
 
   useEffect(() => {
     if (isAndroid) {
       if (nfcVisible) {
-        NFC.startTagSession({ session, content: '', writable: true });
+        NFCAndroid.startBroadCast('');
       } else {
-        NFC.stopTagSession(session);
+        NFCAndroid.stopBroadCast();
       }
     }
     return () => {
@@ -78,32 +76,33 @@ function NFCOption({ nfcVisible, closeNfc, withNfcModal, setData, signerType }) 
     };
   }, [nfcVisible]);
 
-  useEffect(() => {
-    const unsubConnect = session.on(HCESession.Events.HCE_STATE_WRITE_FULL, () => {
-      try {
-        // content written from iOS to android
-        const data = idx(session, (_) => _.application.content.content);
-        if (!data) {
-          showToast('Please scan a valid cosigner', <ToastErrorIcon />);
-          return;
-        }
-        setData(data);
-      } catch (err) {
-        captureError(err);
-        showToast('Something went wrong.', <ToastErrorIcon />);
-      } finally {
+  useEffect(
+    () =>
+      // const unsubConnect = session.on(HCESession.Events.HCE_STATE_WRITE_FULL, () => {
+      //   try {
+      //     // content written from iOS to android
+      //     const data = idx(session, (_) => _.application.content.content);
+      //     if (!data) {
+      //       showToast('Please scan a valid cosigner', <ToastErrorIcon />);
+      //       return;
+      //     }
+      //     setData(data);
+      //   } catch (err) {
+      //     captureError(err);
+      //     showToast('Something went wrong.', <ToastErrorIcon />);
+      //   } finally {
+      //     closeNfc();
+      //   }
+      // });
+      // const unsubDisconnect = session.on(HCESession.Events.HCE_STATE_DISCONNECTED, () => {
+      //   closeNfc();
+      // });
+      () => {
         closeNfc();
-      }
-    });
-    const unsubDisconnect = session.on(HCESession.Events.HCE_STATE_DISCONNECTED, () => {
-      closeNfc();
-    });
-    return () => {
-      unsubConnect();
-      unsubDisconnect();
-      NFC.stopTagSession(session);
-    };
-  }, [session]);
+        NFCAndroid.stopBroadCast();
+      },
+    []
+  );
 
   if (signerType !== SignerType.KEEPER) {
     return null;

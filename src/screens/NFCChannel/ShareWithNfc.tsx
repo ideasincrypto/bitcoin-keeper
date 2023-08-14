@@ -1,45 +1,35 @@
 import { Platform, Vibration } from 'react-native';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import OptionCTA from 'src/components/OptionCTA';
 import NFCIcon from 'src/assets/images/nfc.svg';
 import AirDropIcon from 'src/assets/images/airdrop.svg';
 import NFC from 'src/core/services/nfc';
 import { NfcTech } from 'react-native-nfc-manager';
-import { HCESession, HCESessionContext } from 'react-native-hce';
 import { captureError } from 'src/core/services/sentry';
-import useToastMessage from 'src/hooks/useToastMessage';
-import TickIcon from 'src/assets/images/icon_tick.svg';
 import NfcPrompt from 'src/components/NfcPromptAndroid';
 import Share from 'react-native-share';
 import RNFS from 'react-native-fs';
 import { Box } from 'native-base';
+import NFCAndroid from 'src/nativemodules/NFCAndroid';
 
 function ShareWithNfc({ data }: { data: string }) {
-  const { session } = useContext(HCESessionContext);
   const [visible, setVisible] = React.useState(false);
 
-  const { showToast } = useToastMessage();
+  // const { showToast } = useToastMessage();
 
   const cleanUp = () => {
     setVisible(false);
     Vibration.cancel();
     if (isAndroid) {
-      NFC.stopTagSession(session);
+      NFCAndroid.stopBroadCast();
     }
   };
-  useEffect(() => {
-    const unsubDisconnect = session.on(HCESession.Events.HCE_STATE_DISCONNECTED, () => {
+  useEffect(
+    () => () => {
       cleanUp();
-    });
-    const unsubRead = session.on(HCESession.Events.HCE_STATE_READ, () => {
-      showToast('Cosiigner details shared successfully', <TickIcon />);
-    });
-    return () => {
-      cleanUp();
-      unsubRead();
-      unsubDisconnect();
-    };
-  }, [session]);
+    },
+    []
+  );
 
   const isAndroid = Platform.OS === 'android';
   const isIos = Platform.OS === 'ios';
@@ -53,8 +43,10 @@ function ShareWithNfc({ data }: { data: string }) {
         Vibration.cancel();
       } else {
         setVisible(true);
-        await NFC.startTagSession({ session, content: data });
-        Vibration.vibrate([700, 50, 100, 50], true);
+        const broadcasting = await NFCAndroid.startBroadCast(data);
+        if (broadcasting) {
+          Vibration.vibrate([700, 50, 100, 50], true);
+        }
       }
     } catch (err) {
       Vibration.cancel();

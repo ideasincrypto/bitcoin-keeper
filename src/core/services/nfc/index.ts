@@ -1,5 +1,4 @@
 import NfcManager, { Ndef, NfcTech } from 'react-native-nfc-manager';
-import { HCESession, NFCTagType4NDEFContentType, NFCTagType4 } from 'react-native-hce';
 
 import { Platform } from 'react-native';
 import { captureError } from '../sentry';
@@ -50,12 +49,13 @@ export default class NFC {
       if (supported) {
         await NfcManager.start();
         await NfcManager.requestTechnology(techRequest);
-        const { ndefMessage } = await NfcManager.getTag();
+        const tag = await NfcManager.getTag();
         if (Platform.OS === 'ios') {
           await NfcManager.setAlertMessageIOS('Success');
         }
         await NfcManager.cancelTechnologyRequest();
-        const records = ndefMessage.map((record) => {
+        console.log(tag);
+        const records = tag.ndefMessage.map((record) => {
           const tnfName = tnfValueToName(record.tnf);
           const rtdName = rtdValueToName(record.type);
           let data;
@@ -119,29 +119,5 @@ export default class NFC {
   public static cancelRequest = async () => {
     const isEnabled = await NfcManager.isEnabled();
     if (isEnabled) NfcManager.cancelTechnologyRequest();
-  };
-
-  public static startTagSession = async ({
-    session,
-    content,
-    writable = false,
-  }: {
-    session: HCESession;
-    content: string;
-    writable?: boolean;
-  }) => {
-    const tag = new NFCTagType4({
-      type: NFCTagType4NDEFContentType.Text,
-      content,
-      writable,
-    });
-    await session.setApplication(tag);
-    await session.setEnabled(true);
-  };
-
-  public static stopTagSession = async (session) => {
-    try {
-      await session.setEnabled(false);
-    } catch (e) {}
   };
 }
