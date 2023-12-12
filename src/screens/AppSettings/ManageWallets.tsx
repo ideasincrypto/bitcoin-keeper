@@ -23,6 +23,7 @@ import useWallets from 'src/hooks/useWallets';
 import { useDispatch } from 'react-redux';
 import { setNetBalance } from 'src/store/reducers/wallets';
 import PasscodeVerifyModal from 'src/components/Modal/PasscodeVerify';
+import { updateAppImage } from 'src/store/sagaActions/bhr';
 
 const styles = StyleSheet.create({
   learnMoreContainer: {
@@ -147,6 +148,7 @@ function ManageWallets() {
           shell: wallet.presentationData.shell,
         },
       });
+      dispatch(updateAppImage(wallet.id));
     } catch (error) {
       captureError(error);
     }
@@ -162,6 +164,7 @@ function ManageWallets() {
           shell: wallet.presentationData.shell,
         },
       });
+      dispatch(updateAppImage(wallet.id));
     } catch (error) {
       console.log(error);
     }
