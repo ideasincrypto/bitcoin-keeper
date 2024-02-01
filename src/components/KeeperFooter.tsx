@@ -26,11 +26,9 @@ export function KeeperFooter({
     <Box bottom={wrappedScreen ? -10 : undefined}>
       <Box style={styles.border} borderColor={`${colorMode}.GreyText`} />
       <Box
-        flexDirection="row"
         justifyContent={footerItemsToRender.length > 2 ? 'space-between' : 'space-around'}
         marginX={marginX}
-        marginTop={3}
-        alignItems="flex-start"
+        style={styles.footerItems}
       >
         {footerItemsToRender.map((item) => {
           return (
@@ -62,6 +60,11 @@ export function KeeperFooter({
 export default KeeperFooter;
 
 const styles = StyleSheet.create({
+  footerItems: {
+    flexDirection: 'row',
+    marginTop: 20,
+    marginBottom: 10,
+  },
   footerText: {
     fontSize: 12,
     letterSpacing: 0.84,
@@ -71,6 +74,7 @@ const styles = StyleSheet.create({
   IconWrapper: {
     justifyContent: 'space-around',
     alignItems: 'center',
+    gap: 7,
   },
   border: {
     borderWidth: 0.5,

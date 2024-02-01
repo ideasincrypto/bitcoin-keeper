@@ -43,7 +43,7 @@ function Label({
       key={name}
       onLayout={(event) => onLayout(event, index)}
       style={styles.utxoLabelView}
-      backgroundColor={isSystem ? `${colorMode}.forestGreen` : `${colorMode}.accent`}
+      backgroundColor={isSystem ? `${colorMode}.ForestGreenDark` : `${colorMode}.RussetBrown`}
     >
       <Text style={styles.labelText} bold testID={`text_${name.replace(/ /g, '_')}`}>
         {name.toUpperCase()}
@@ -88,7 +88,7 @@ function UTXOLabel(props: { labels: Array<{ name: string; isSystem: boolean }> }
       {extraLabelCount > 0 && (
         <Box
           style={[styles.utxoLabelView, { maxHeight: 19 }]}
-          backgroundColor={`${colorMode}.accent`}
+          backgroundColor={`${colorMode}.RussetBrown`}
         >
           <Text style={styles.labelText} testID="text_extraLabelCount">
             +{extraLabelCount}
@@ -186,7 +186,7 @@ function UTXOElement({
           </Box>
           <UTXOLabel labels={labels} />
         </Box>
-        <Box style={[styles.amountWrapper, { width: '45%' }]}>
+        <Box style={styles.amountWrapper}>
           {item.confirmed ? null : (
             <Box paddingX={3} testID="view_unconfirmIcon">
               <UnconfirmedIcon />
@@ -296,6 +296,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
+    width: '45%',
+    alignSelf: 'flex-end',
   },
   amountText: {
     fontSize: 19,

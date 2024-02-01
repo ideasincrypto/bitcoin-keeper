@@ -4,8 +4,8 @@ import ScreenWrapper from 'src/components/ScreenWrapper';
 import UTXOList from 'src/components/UTXOsComponents/UTXOList';
 import NoVaultTransactionIcon from 'src/assets/images/emptystate.svg';
 import NoTransactionIcon from 'src/assets/images/no_transaction_icon.svg';
-import VaultIcon from 'src/assets/images/icon_vault.svg';
-import LinkedWallet from 'src/assets/images/walletUtxos.svg';
+import WalletIcon from 'src/assets/images/daily_wallet.svg';
+import VaultIcon from 'src/assets/images/vault_icon.svg';
 import UTXOFooter from 'src/components/UTXOsComponents/UTXOFooter';
 import FinalizeFooter from 'src/components/UTXOsComponents/FinalizeFooter';
 import Text from 'src/components/KeeperText';
@@ -23,7 +23,7 @@ import KeeperModal from 'src/components/KeeperModal';
 import Buttons from 'src/components/Buttons';
 import BatteryIllustration from 'src/assets/images/CautionIllustration.svg';
 import useWallets from 'src/hooks/useWallets';
-import { Box, HStack, useColorMode, VStack } from 'native-base';
+import { Box, useColorMode } from 'native-base';
 import useWhirlpoolWallets, {
   whirlpoolWalletAccountMapInterface,
 } from 'src/hooks/useWhirlpoolWallets';
@@ -37,6 +37,9 @@ import SendBadBankSatsModal from './components/SendBadBankSatsModal';
 import useVault from 'src/hooks/useVault';
 import { AppStackParams } from 'src/navigation/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import CurrencyTypeSwitch from 'src/components/Switch/CurrencyTypeSwitch';
+import HexagonIcon from 'src/components/HexagonIcon';
+import Colors from 'src/theme/Colors';
 
 const getWalletBasedOnAccount = (
   depositWallet: Wallet,
@@ -257,27 +260,29 @@ function UTXOManagement({ route, navigation }: ScreenProps) {
   return (
     <ScreenWrapper backgroundcolor={`${colorMode}.primaryBackground`}>
       <ActivityIndicatorView visible={syncing} showLoader />
-      <KeeperHeader learnMore learnMorePressed={() => setLearnModalVisible(true)} />
-      {isWhirlpoolWallet ? (
-        <AccountSelectionTab
-          selectedAccount={selectedAccount}
-          setSelectedAccount={setSelectedAccount}
-          updateSelectedWallet={updateSelectedWallet}
-          setEnableSelection={setEnableSelection}
+      <Box style={{ marginBottom: 70 }}>
+        <KeeperHeader
+          title={wallet?.presentationData?.name}
+          subtitle={wallet?.presentationData?.description}
+          icon={
+            <HexagonIcon
+              width={44}
+              height={38}
+              backgroundColor={Colors.pantoneGreen}
+              icon={routeName === 'Vault' ? <VaultIcon /> : <WalletIcon />}
+            />
+          }
+          rightComponent={<CurrencyTypeSwitch />}
         />
-      ) : (
-        <HStack marginBottom={10}>
-          <Box paddingX={3}>{routeName === 'Vault' ? <VaultIcon /> : <LinkedWallet />}</Box>
-          <VStack>
-            <Text color={`${colorMode}.greenText`} style={[styles.vaultInfoText, { fontSize: 16 }]}>
-              {wallet?.presentationData?.name}
-            </Text>
-            <Text color={`${colorMode}.black`} style={[styles.vaultInfoText, { fontSize: 12 }]}>
-              {wallet?.presentationData?.description}
-            </Text>
-          </VStack>
-        </HStack>
-      )}
+        {isWhirlpoolWallet && (
+          <AccountSelectionTab
+            selectedAccount={selectedAccount}
+            setSelectedAccount={setSelectedAccount}
+            updateSelectedWallet={updateSelectedWallet}
+            setEnableSelection={setEnableSelection}
+          />
+        )}
+      </Box>
       {enableSelection ? (
         <UTXOSelectionTotal selectionTotal={selectionTotal} selectedUTXOs={selectedUTXOs} />
       ) : null}
@@ -292,7 +297,7 @@ function UTXOManagement({ route, navigation }: ScreenProps) {
         selectedAccount={selectedAccount}
         initateWhirlpoolMix={initateWhirlpoolMix}
       />
-      {utxos?.length ? (
+      {utxos?.length && (
         <Footer
           utxos={utxos}
           setInitiateWhirlpool={setInitiateWhirlpool}
@@ -313,7 +318,7 @@ function UTXOManagement({ route, navigation }: ScreenProps) {
           remixingToVault={remixingToVault}
           vaultId={vaultId}
         />
-      ) : null}
+      )}
       <KeeperModal
         justifyContent="flex-end"
         visible={showBatteryWarningModal}
@@ -349,7 +354,7 @@ function UTXOManagement({ route, navigation }: ScreenProps) {
                   primaryCallback={() => {
                     setShowBatteryWarningModal(false);
                     setEnableSelection(false);
-                    navigation.navigate('MixProgress', {
+                    CommonActions.navigate('MixProgress', {
                       selectedUTXOs,
                       depositWallet,
                       selectedWallet,

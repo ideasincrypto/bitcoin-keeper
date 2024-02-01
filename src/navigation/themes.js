@@ -134,6 +134,7 @@ export const customTheme = extendTheme({
       PaleIvory: Colors.PaleIvory,
       DarkSage: Colors.DarkSage,
       Smoke: Colors.Smoke,
+      ForestGreenDark: Colors.ForestGreenDark,
     },
     dark: {
       primaryGreen: Colors.GenericViridian,
@@ -218,6 +219,7 @@ export const customTheme = extendTheme({
       PaleIvory: Colors.PaleIvory,
       DarkSage: Colors.DarkSage,
       Smoke: Colors.Smoke,
+      ForestGreenDark: Colors.ForestGreenDark,
     },
   },
   config: {
