@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Box, Input, View, Select, useColorMode } from 'native-base';
+import { Box, Input, View, Select, useColorMode, ScrollView } from 'native-base';
 import KeeperHeader from 'src/components/KeeperHeader';
 import StatusBarComponent from 'src/components/StatusBarComponent';
 import Buttons from 'src/components/Buttons';
@@ -154,7 +154,7 @@ function EnterWalletDetailScreen({ route }) {
   };
 
   const renderAdvanceOptions = () => (
-    <Box>
+    <Box style={styles.advancedContainer}>
       <KeeperText style={[styles.autoTransferText, { color: `${colorMode}.GreyText` }]}>
         {common.path}
       </KeeperText>
@@ -163,12 +163,13 @@ function EnterWalletDetailScreen({ route }) {
           backgroundColor={`${colorMode}.seashellWhite`}
           placeholder={common.path}
           placeholderTextColor={`${colorMode}.GreyText`}
+          height={10}
           value={path}
           onChangeText={(value) => {
             setPath(value);
           }}
           style={styles.inputField}
-          width={wp(260)}
+          width={'100%'}
           autoCorrect={false}
           marginY={2}
           borderWidth="0"
@@ -179,7 +180,8 @@ function EnterWalletDetailScreen({ route }) {
         {common.purpose}
       </KeeperText>
       <Select
-        style={{ backgroundColor: 'red' }}
+        backgroundColor={`${colorMode}.seashellWhite`}
+        borderColor={`${colorMode}.seashellWhite`}
         selectedValue={purpose}
         minWidth="200"
         accessibilityLabel={common.chooseService}
@@ -202,137 +204,95 @@ function EnterWalletDetailScreen({ route }) {
         subtitle={wallet.AddNewWalletDescription}
       />
       <View marginX={4} marginY={4}>
-        <Box backgroundColor={`${colorMode}.seashellWhite`} style={styles.inputFieldWrapper}>
-          <Input
-            backgroundColor={`${colorMode}.seashellWhite`}
-            placeholder={wallet.WalletNamePlaceHolder}
-            placeholderTextColor={`${colorMode}.GreyText`}
-            value={walletName}
-            onChangeText={(value) => {
-              if (route.params?.name === walletName) {
-                setWalletName('');
-                return;
-              }
-              setWalletName(value);
-            }}
-            style={styles.inputField}
-            width={wp(260)}
-            autoCorrect={false}
-            marginY={2}
-            borderWidth="0"
-            maxLength={20}
-            testID={`input_wallet_name`}
-          />
-          <KeeperText color={`${colorMode}.GreyText`} style={styles.limitText}>
-            {walletName && walletName.length}/20
-          </KeeperText>
-        </Box>
-        <Box backgroundColor={`${colorMode}.seashellWhite`} style={styles.inputFieldWrapper}>
-          <Input
-            backgroundColor={`${colorMode}.seashellWhite`}
-            placeholder={wallet.WalletDescriptionPlaceholder}
-            placeholderTextColor={`${colorMode}.GreyText`}
-            value={walletDescription}
-            onChangeText={(value) => {
-              if (route.params?.description === walletDescription) {
-                setWalletDescription('');
-                return;
-              }
-              setWalletDescription(value);
-            }}
-            style={styles.inputField}
-            width={wp(260)}
-            autoCorrect={false}
-            borderWidth="0"
-            marginY={2}
-            maxLength={40}
-            testID={`input_wallet_description`}
-          />
-          <KeeperText color={`${colorMode}.GreyText`} style={styles.limitText}>
-            {walletDescription && walletDescription.length}/40
-          </KeeperText>
-        </Box>
-        {/* <Box marginTop={5}> */}
-        {/* <KeeperText style={styles.autoTransferText} color={`${colorMode}.GreyText`}>
-            {wallet.AutoTransferInitiated}
-          </KeeperText> */}
-        {/* <Box style={styles.transferPolicyTextArea} backgroundColor={`${colorMode}.seashellWhite`}>
-            <Box style={styles.bitcoinLogo}>
-              {colorMode === 'light' ? (
-                <BitcoinGreyIcon height="15" width="15" />
-              ) : (
-                <BitcoinWhiteIcon height="15" width="15" />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Box backgroundColor={`${colorMode}.seashellWhite`} style={styles.inputFieldWrapper}>
+            <Input
+              backgroundColor={`${colorMode}.seashellWhite`}
+              placeholder={wallet.WalletNamePlaceHolder}
+              placeholderTextColor={`${colorMode}.GreyText`}
+              value={walletName}
+              onChangeText={(value) => {
+                if (route.params?.name === walletName) {
+                  setWalletName('');
+                  return;
+                }
+                setWalletName(value);
+              }}
+              style={styles.inputField}
+              width={wp(260)}
+              autoCorrect={false}
+              marginY={2}
+              borderWidth="0"
+              maxLength={20}
+              testID={`input_wallet_name`}
+            />
+            <KeeperText color={`${colorMode}.GreyText`} style={styles.limitText}>
+              {walletName && walletName.length}/20
+            </KeeperText>
+          </Box>
+          <Box backgroundColor={`${colorMode}.seashellWhite`} style={styles.inputFieldWrapper}>
+            <Input
+              backgroundColor={`${colorMode}.seashellWhite`}
+              placeholder={wallet.WalletDescriptionPlaceholder}
+              placeholderTextColor={`${colorMode}.GreyText`}
+              value={walletDescription}
+              onChangeText={(value) => {
+                if (route.params?.description === walletDescription) {
+                  setWalletDescription('');
+                  return;
+                }
+                setWalletDescription(value);
+              }}
+              style={styles.inputField}
+              width={wp(260)}
+              autoCorrect={false}
+              borderWidth="0"
+              marginY={2}
+              maxLength={40}
+              testID={`input_wallet_description`}
+            />
+            <KeeperText color={`${colorMode}.GreyText`} style={styles.limitText}>
+              {walletDescription && walletDescription.length}/40
+            </KeeperText>
+          </Box>
+          <Text style={styles.transferText} color={`${colorMode}.primaryText`}>
+            {importWallet.autoTransfer}
+          </Text>
+          <Box style={styles.amountWrapper} backgroundColor={`${colorMode}.seashellWhite`}>
+            <Box mx={3}>
+              {getCurrencyImageByRegion(
+                currencyCode,
+                'dark',
+                currentCurrency,
+                colorMode === 'light' ? BitcoinInput : BitcoinWhite
               )}
             </Box>
-            <KeeperText style={styles.splitter} color={`${colorMode}.divider`}>
-              |
-            </KeeperText>
-            <Box style={styles.transferPolicyInputWrapper}>
-              <Input
-                backgroundColor={`${colorMode}.seashellWhite`}
-                placeholderTextColor={`${colorMode}.GreyText`}
-                value={formatNumber(transferPolicy)}
-                onChangeText={(value) => setTransferPolicy(value)}
-                autoCorrect={false}
-                fontSize={15}
-                fontWeight="300"
-                style={styles.transferPolicyInput}
-                keyboardType="numeric"
-                borderWidth="0"
-                // letterSpacing={3}
-                color={`${colorMode}.greenText`}
-                testID={`input_${formatNumber(transferPolicy)}`}
-              />
-            </Box>
-            <Box style={styles.sats}>
-              <KeeperText type="bold">{common.sats}</KeeperText>
-            </Box>
-          </Box> */}
-        {/* <KeeperText style={styles.autoTransferTextDesc} color={`${colorMode}.GreyText`}>
-            {wallet.AutoTransferInitiatedDesc}
-          </KeeperText> */}
-        {/* </Box> */}
-        <Text style={styles.transferText} color={`${colorMode}.primaryText`}>
-          {importWallet.autoTransfer}
-        </Text>
-        <Box style={styles.amountWrapper} backgroundColor={`${colorMode}.seashellWhite`}>
-          <Box mx={3}>
-            {getCurrencyImageByRegion(
-              currencyCode,
-              'dark',
-              currentCurrency,
-              colorMode === 'light' ? BitcoinInput : BitcoinWhite
-            )}
+            <Box width={0.5} backgroundColor={`${colorMode}.divider`} opacity={0.3} height={8} />
+            <Input
+              backgroundColor={`${colorMode}.seashellWhite`}
+              placeholder={importWallet.enterAmount}
+              placeholderTextColor={`${colorMode}.GreyText`}
+              width="87%"
+              h={10}
+              fontSize={14}
+              fontWeight={300}
+              letterSpacing={1.04}
+              borderWidth="0"
+              value={formatNumber(transferPolicy)}
+              onChangeText={(value) => {
+                setTransferPolicy(value);
+              }}
+              variant="unstyled"
+              keyboardType="numeric"
+              InputRightElement={<KeeperText bold>{common.sats}</KeeperText>}
+              testID="input_transfer_policy"
+            />
           </Box>
-          <Box width={0.5} backgroundColor={`${colorMode}.divider`} opacity={0.3} height={8} />
-          <Input
-            backgroundColor={`${colorMode}.seashellWhite`}
-            placeholder={importWallet.enterAmount}
-            placeholderTextColor={`${colorMode}.GreyText`}
-            width="87%"
-            h={10}
-            fontSize={14}
-            fontWeight={300}
-            letterSpacing={1.04}
-            borderWidth="0"
-            value={formatNumber(transferPolicy)}
-            onChangeText={(value) => {
-              setTransferPolicy(value);
-            }}
-            variant="unstyled"
-            keyboardType="numeric"
-            InputRightElement={
-              <Box style={styles.sats}>
-                <KeeperText type="bold">{common.sats}</KeeperText>
-              </Box>
-            }
-            testID="input_transfer_policy"
-          />
-        </Box>
-        <Text style={styles.balanceCrossesText} color={`${colorMode}.primaryText`}>
-          {importWallet.walletBalance}
-        </Text>
-        {walletType === WalletType.IMPORTED && renderAdvanceOptions()}
+          <Text style={styles.balanceCrossesText} color={`${colorMode}.primaryText`}>
+            {importWallet.walletBalance}
+          </Text>
+          {walletType === WalletType.IMPORTED && renderAdvanceOptions()}
+        </ScrollView>
         <View marginY={5}>
           <Buttons
             secondaryText={common.cancel}
@@ -374,7 +334,6 @@ const styles = StyleSheet.create({
   },
   autoTransferText: {
     fontSize: 12,
-    // letterSpacing: '0.6@s',
   },
   autoTransferTextDesc: {
     fontSize: 10,
@@ -430,10 +389,6 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     opacity: 0.25,
   },
-  sats: {
-    bottom: -8,
-  },
-  //
   transferText: {
     width: '100%',
     fontSize: 12,
@@ -454,6 +409,9 @@ const styles = StyleSheet.create({
     marginTop: hp(10),
     letterSpacing: 0.6,
     marginHorizontal: 2,
+  },
+  advancedContainer: {
+    marginTop: 10,
   },
 });
 export default EnterWalletDetailScreen;

@@ -22,10 +22,9 @@ import OptionCard from 'src/components/OptionCard';
 const styles = StyleSheet.create({
   btn: {
     flexDirection: 'row',
-    width: '90%',
     height: wp('13%'),
     position: 'relative',
-    marginHorizontal: 12,
+    marginLeft: 5,
     borderRadius: 10,
   },
   textCurrency: {
@@ -156,7 +155,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     marginTop: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
 });
 

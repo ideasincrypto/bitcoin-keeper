@@ -127,7 +127,7 @@ const getStyles = (marginLeft: boolean) =>
       width: 20,
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 20,
+      paddingVertical: 20,
     },
     learnMoreContainer: {
       borderWidth: 0.5,
@@ -148,7 +148,7 @@ const getStyles = (marginLeft: boolean) =>
       justifyContent: 'space-between',
     },
     headerInfo: {
-      paddingLeft: marginLeft ? '10%' : 0,
+      paddingLeft: marginLeft ? '7%' : 0,
       flexDirection: 'row',
       gap: 10,
     },

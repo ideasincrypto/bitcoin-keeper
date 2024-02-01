@@ -166,6 +166,7 @@ function PrivacyAndDisplay() {
 const styles = StyleSheet.create({
   wrapper: {
     marginTop: hp(35),
+    paddingLeft: 10,
     gap: 50,
   },
   note: {

@@ -9,7 +9,7 @@ function CountrySwitchCard(props) {
     <Box
       backgroundColor={`${colorMode}.backgroundColor2`}
       flexDirection="row"
-      padding={4}
+      style={styles.container}
       {...props}
     >
       <Box flex={1.5}>
@@ -25,6 +25,9 @@ function CountrySwitchCard(props) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    padding: 15,
+  },
   titleText: {
     fontSize: 13,
     letterSpacing: 0.13,

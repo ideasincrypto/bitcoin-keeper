@@ -73,6 +73,7 @@ export function OptionCard({
 
 const styles = StyleSheet.create({
   iconContainer: {
+    paddingLeft: 3,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 5,
