@@ -10,12 +10,10 @@ import {
 } from 'src/store/sagaActions/send_and_receive';
 import { hp, windowHeight, windowWidth, wp } from 'src/constants/responsive';
 import BTC from 'src/assets/images/btc_grey.svg';
-import BitcoinUnit from 'src/models/enums/BitcoinUnit';
 import Buttons from 'src/components/Buttons';
 import KeeperHeader from 'src/components/KeeperHeader';
 import { LocalizationContext } from 'src/context/Localization/LocContext';
 import Note from 'src/components/Note/Note';
-import RadioButton from 'src/components/RadioButton';
 import ScreenWrapper from 'src/components/ScreenWrapper';
 import SuccessIcon from 'src/assets/images/successSvg.svg';
 import { EntityKind, TxPriority, VaultType } from 'src/core/wallets/enums';
@@ -44,11 +42,11 @@ import { whirlPoolWalletTypes } from 'src/core/wallets/factories/WalletFactory';
 import useVault from 'src/hooks/useVault';
 import Fonts from 'src/constants/Fonts';
 import PasscodeVerifyModal from 'src/components/Modal/PasscodeVerify';
-import AddIcon from 'src/assets/images/add.svg';
-import AddIconWhite from 'src/assets/images/icon_add_white.svg';
 import { UTXO } from 'src/core/wallets/interfaces';
 import CustomPriorityModal from './CustomPriorityModal';
 import CurrencyTypeSwitch from 'src/components/Switch/CurrencyTypeSwitch';
+import Checked from 'src/assets/images/check.svg';
+import AddCard from 'src/components/AddCard';
 
 const customFeeOptionTransfers = [
   TransferType.VAULT_TO_ADDRESS,
@@ -227,15 +225,9 @@ function Transaction({ txFeeInfo, transactionPriority }) {
   );
 }
 
-function TextValue({ amt, getValueIcon }) {
+function TextValue({ amt, getValueIcon, colorMode }) {
   return (
-    <Text
-      style={{
-        ...styles.priorityTableText,
-        flex: 1,
-        textAlign: 'right',
-      }}
-    >
+    <Text fontSize={16} color={`${colorMode}.SlateGrey`}>
       {amt} {getValueIcon() === 'sats' ? 'sats' : '$'}
     </Text>
   );
@@ -250,29 +242,10 @@ function SendingPriority({
   getBalance,
   getSatUnit,
 }) {
-  const { translations } = useContext(LocalizationContext);
-  const { settings, wallet: walletTranslation } = translations;
   const { colorMode } = useColorMode();
   return (
-    <Box>
-      {/* <Transaction txFeeInfo={txFeeInfo} transactionPriority={transactionPriority} /> */}
-      <Box flexDirection="row" justifyContent="space-between" width="90%">
-        <Box
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingVertical: 10,
-            marginHorizontal: 20,
-            width: '100%',
-          }}
-        >
-          <Text style={styles.headingLabelText}>Priority</Text>
-          <Text style={styles.headingLabelText}>Arrival Time</Text>
-          <Text style={styles.headingLabelText}>Fees</Text>
-        </Box>
-      </Box>
-
-      <Box mt={hp(1)} width="100%">
+    <Box style={styles.priorityModal}>
+      <Box style={styles.priorityCardContainer}>
         {availableTransactionPriorities?.map((priority) => {
           if (txFeeInfo[priority?.toLowerCase()].estimatedBlocksBeforeConfirmation !== 0) {
             return (
@@ -283,60 +256,40 @@ function SendingPriority({
                 }}
               >
                 <Box
-                  style={styles.priorityRowContainer}
-                  opacity={transactionPriority === priority ? 1 : 0.5}
                   backgroundColor={`${colorMode}.seashellWhite`}
+                  style={styles.priorityCard}
+                  opacity={transactionPriority === priority ? 1 : 0.5}
                 >
-                  <Box style={styles.priorityBox}>
-                    <RadioButton
-                      size={20}
-                      isChecked={transactionPriority === priority}
-                      borderColor="#74837F"
-                      onpress={() => {
-                        setTransactionPriority(priority);
-                      }}
+                  {transactionPriority === priority ? (
+                    <Checked style={{ alignSelf: 'flex-end' }} />
+                  ) : (
+                    <Box style={styles.circle} />
+                  )}
+                  <Box style={styles.infoContainer}>
+                    <TextValue
+                      amt={getBalance(txFeeInfo[priority?.toLowerCase()]?.amount)}
+                      getValueIcon={getSatUnit}
+                      colorMode={colorMode}
                     />
-                    <Text
-                      style={{
-                        ...styles.priorityTableText,
-                        marginLeft: 12,
-                        fontStyle: 'normal',
-                      }}
-                    >
+                    <Text fontSize={12} bold color={`${colorMode}.GreyText`}>
                       {String(priority)}
                     </Text>
+                    <Text fontSize={11} bold color={`${colorMode}.GreenishGrey`}>
+                      ~{txFeeInfo[priority?.toLowerCase()]?.estimatedBlocksBeforeConfirmation * 10}{' '}
+                      mins
+                    </Text>
                   </Box>
-                  <Text
-                    style={{
-                      ...styles.priorityTableText,
-                      flex: 1,
-                    }}
-                  >
-                    ~{txFeeInfo[priority?.toLowerCase()]?.estimatedBlocksBeforeConfirmation * 10}{' '}
-                    mins
-                  </Text>
-                  <TextValue
-                    amt={getBalance(txFeeInfo[priority?.toLowerCase()]?.amount)}
-                    getValueIcon={getSatUnit}
-                  />
                 </Box>
               </TouchableOpacity>
             );
           }
         })}
       </Box>
-      <TouchableOpacity onPress={setVisibleCustomPriorityModal}>
-        <Box
-          backgroundColor={`${colorMode}.lightAccent`}
-          borderColor={`${colorMode}.coffeeBackground`}
-          style={styles.addTransPriority}
-        >
-          {colorMode === 'light' ? <AddIcon /> : <AddIconWhite />}
-          <Text style={[styles.addPriorityText, { paddingLeft: colorMode === 'light' ? 10 : 0 }]}>
-            {walletTranslation.addCustomPriority}
-          </Text>
-        </Box>
-      </TouchableOpacity>
+      <AddCard
+        name="Add"
+        cardStyles={styles.customPriority}
+        callback={() => setVisibleCustomPriorityModal()}
+      />
     </Box>
   );
 }
@@ -865,7 +818,7 @@ function SendConfirmation({ route }) {
         title={walletTransactions.transactionPriority}
         subTitleWidth={wp(240)}
         subTitle=""
-        modalBackground={`${colorMode}.modalWhiteBackground`}
+        modalBackground={`${colorMode}.primaryBackground`}
         subTitleColor={`${colorMode}.secondaryText`}
         textColor={`${colorMode}.primaryText`}
         buttonTextColor={`${colorMode}.white`}
@@ -966,11 +919,6 @@ const styles = StyleSheet.create({
     paddingVertical: hp(14),
     flex: 1,
   },
-  priorityTableText: {
-    fontSize: 10,
-    textAlign: 'center',
-    color: '#656565',
-  },
   gradient: {
     flex: 1,
     justifyContent: 'center',
@@ -985,7 +933,8 @@ const styles = StyleSheet.create({
     marginTop: hp(20),
   },
   customPriority: {
-    fontStyle: 'italic',
+    height: hp(125),
+    width: wp(90),
   },
   transPriorityWrapper: {
     flexDirection: 'row',
@@ -1081,5 +1030,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '25%',
+  },
+  priorityCardContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  priorityCard: {
+    width: wp(90),
+    height: hp(125),
+    borderRadius: 10,
+    padding: 10,
+    justifyContent: 'space-between',
+  },
+  circle: {
+    width: 20,
+    height: 20,
+    borderRadius: 20 / 2,
+    borderWidth: 1,
+    alignSelf: 'flex-end',
+  },
+  infoContainer: {
+    gap: 3,
+  },
+  priorityModal: {
+    gap: 20,
   },
 });

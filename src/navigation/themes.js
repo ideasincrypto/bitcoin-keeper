@@ -220,6 +220,7 @@ export const customTheme = extendTheme({
       DarkSage: Colors.DarkSage,
       Smoke: Colors.Smoke,
       ForestGreenDark: Colors.ForestGreenDark,
+      seashellWhite: Colors.Seashell,
     },
   },
   config: {

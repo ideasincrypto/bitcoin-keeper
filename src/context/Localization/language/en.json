@@ -402,6 +402,7 @@
     "ARRIVALTIME": "ARRIVAL TIME",
     "FEE": "FEE",
     "transactionPriority": "Transaction Priority",
+    "transactionPrioritySubtitle": "Decide how fast you want transaction confirmation",
     "addCustomPriority": "Add Custom Priority",
     "totalAmount": "Total Amount",
     "totalFees": "Total Fees",
