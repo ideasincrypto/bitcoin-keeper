@@ -34,7 +34,7 @@ const ManageSigners = ({ route }: ScreenProps) => {
       CommonActions.navigate('SigningDeviceDetails', {
         signer,
         vaultId,
-        vaultKey: vaultKeys.length ? item : undefined,
+        vaultKey: item,
         vaultSigners: vaultKeys,
       })
     );
