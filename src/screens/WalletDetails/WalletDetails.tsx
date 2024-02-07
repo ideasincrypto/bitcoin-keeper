@@ -113,9 +113,9 @@ function WalletDetails({ route }: ScreenProps) {
           learnMorePressed={() => dispatch(setIntroModal(true))}
           contrastScreen={true}
           title={name}
-          titleColor={`${colorMode}.white`}
+          titleColor={`${colorMode}.seashellWhite`}
           subtitle={walletType === 'IMPORTED' ? 'Imported wallet' : description}
-          subTitleColor={`${colorMode}.white`}
+          subTitleColor={`${colorMode}.seashellWhite`}
           icon={isWhirlpoolWallet ? <WhirlpoolAccountIcon /> : <WalletIcon />}
         />
         <Box style={styles.balanceWrapper}>
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   },
   walletContainer: {
     paddingHorizontal: wp(28),
-    paddingTop: wp(45),
+    paddingTop: wp(60),
     paddingBottom: 20,
     flex: 1,
     justifyContent: 'space-between',
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   actionCard: {
-    marginTop: 30,
+    marginTop: 20,
     marginBottom: -50,
     zIndex: 10,
     flexDirection: 'row',

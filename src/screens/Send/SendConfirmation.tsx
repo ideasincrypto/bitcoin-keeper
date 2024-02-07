@@ -613,7 +613,7 @@ function SendConfirmation({ route }) {
   );
   const navigation = useNavigation();
   const collaborativeWalletId =
-    sender.entityKind === EntityKind.VAULT && sender.type === VaultType.COLLABORATIVE
+    sender?.entityKind === EntityKind.VAULT && sender.type === VaultType.COLLABORATIVE
       ? sender.collaborativeWalletId
       : '';
 

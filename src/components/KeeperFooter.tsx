@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   IconWrapper: {
     justifyContent: 'space-around',
     alignItems: 'center',
-    gap: 7,
+    gap: 10,
   },
   border: {
     borderWidth: 0.5,
